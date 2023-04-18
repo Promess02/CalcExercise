@@ -1,55 +1,48 @@
 import java.util.Stack;
 
 public class Main {
-    static int Prec(String ch)
+    static int precedence(String ch)
     {
-        switch (ch) {
-            case "+":
-            case "-":
-                return 1;
-
-            case "*":
-            case "/":
-                return 2;
-
-            case "^":
-                return 3;
-        }
-        return -1;
+        return switch (ch) {
+            case "+", "-" -> 1;
+            case "*", "/" -> 2;
+            case "^" -> 3;
+            default -> -1;
+        };
     }
 
     static private class StringStack{
 
         StringStack(){
             dane = new String[10];
-            wskStosu = -1;
+            stackPtr = -1;
         }
         private String[] dane;
-        private int wskStosu;
+        private int stackPtr;
 
         private void push(String exp){
-            wskStosu++;
-            dane[wskStosu] = exp;
+            stackPtr++;
+            dane[stackPtr] = exp;
         }
 
         private String peek(){
-            return dane[wskStosu];
+            return dane[stackPtr];
         }
 
         private void pop(){
-            dane[wskStosu] = "";
-            wskStosu--;
+            dane[stackPtr] = "";
+            stackPtr--;
         }
 
         private Boolean isEmpty(){
-            return wskStosu == -1;
+            return stackPtr == -1;
         }
     }
 
 
     static String infixToPostfix(String exp)
     {
-        String result = new String("");
+        String result = "";
 
         StringStack stack = new StringStack();
 
@@ -62,8 +55,7 @@ public class Main {
 
 
             else if (c == '('){
-                Character character = c;
-                stack.push(character.toString());
+                stack.push(Character.toString(c));
             }
 
             else if (c == ')') {
@@ -79,14 +71,13 @@ public class Main {
             else
             {
                 result += " ";
-                Character character = c;
                 while (!stack.isEmpty()
-                        && Prec(character.toString()) <= Prec(stack.peek())) {
+                        && precedence(Character.toString(c)) <= precedence(stack.peek())) {
 
                     result += stack.peek()+" ";
                     stack.pop();
                 }
-                stack.push(character.toString());
+                stack.push(Character.toString(c));
             }
         }
 
@@ -101,7 +92,7 @@ public class Main {
     }
 
     public static int evaluatePostfix(String expr) {
-        Stack<Integer> stack = new Stack<Integer>();
+        Stack<Integer> stack = new Stack<>();
         String[] characters = expr.split(" ");
 
         for (String character : characters) {
